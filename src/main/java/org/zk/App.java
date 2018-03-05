@@ -5,6 +5,8 @@ package org.zk;
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        User user = new User();
+        user.setId(1);
+        System.out.println(user);
     }
 }
