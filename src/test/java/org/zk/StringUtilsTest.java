@@ -1,5 +1,6 @@
 package org.zk;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,5 +30,19 @@ public class StringUtilsTest {
     public void anyEmpty() {
         Assert.assertTrue(StringUtils.isAnyBlank("a", "b", ""));
         Assert.assertTrue(StringUtils.isAllBlank("", null));
+    }
+
+    @Test
+    public void abbreviate() {
+        System.out.println(StringUtils.abbreviate("this is a long long story", 6));
+        System.out.println(StringUtils.abbreviate("a", 6));
+    }
+
+    @Test
+    public void trim() {
+        System.out.println(StringUtils.strip(" ab c "));
+        System.out.println(StringUtils.strip(null));
+        System.out.println(StringUtils.stripToEmpty(" asdf "));//---""
+        System.out.println(StringUtils.stripToEmpty(null));//---""
     }
 }
