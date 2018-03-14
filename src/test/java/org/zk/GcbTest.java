@@ -1,12 +1,9 @@
 package org.zk;
 
-
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -18,15 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Unit test for simple App.
+ * Created by zhangkang on 2018/3/14.
  */
-public class AppTest {
+public class GcbTest {
 
     @Test
-    public void testGet() throws Exception{
+    public void testQueryBalance() throws Exception {
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet("http://www.baidu.com");
-        CloseableHttpResponse response1 = httpclient.execute(httpGet);
+        HttpPost httpPost = new HttpPost("http://10.113.1.58:9528/CGBClient/BankAction");
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        nvps.add(new BasicNameValuePair("cgb_data", "<?xml version=\"1.0\" encoding = \"GBK\"?><BEDC><Message><commHead><tranCode>0001</tranCode><cifMaster>1000126240</cifMaster><entSeqNo>201605280001131005</entSeqNo><tranDate>20160528</tranDate><tranTime>131005</tranTime><retCode>000</retCode><entUserId>100001</entUserId><password><![CDATA[1q2w3e4r]]></password></commHead><Body><account>9550880043236602603</account></Body></Message></BEDC>"));
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+        CloseableHttpResponse response1 = httpclient.execute(httpPost);
         try {
             System.out.println(response1.getStatusLine());
             HttpEntity entity1 = response1.getEntity();
@@ -35,6 +35,4 @@ public class AppTest {
             response1.close();
         }
     }
-
-
 }
