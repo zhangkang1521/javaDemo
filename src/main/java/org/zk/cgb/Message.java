@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Created by zhangkang on 2018/3/14.
  */
+@XStreamAlias("message")
 public class Message<T> {
     private CommHead commHead;
     private T body;

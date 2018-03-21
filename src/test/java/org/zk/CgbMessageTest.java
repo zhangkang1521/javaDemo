@@ -29,4 +29,6 @@ public class CgbMessageTest {
         xStream.aliasSystemAttribute(null, "class");
         System.out.println(xStream.toXML(bedc));
     }
+
+
 }
