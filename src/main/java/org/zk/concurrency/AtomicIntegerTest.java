@@ -10,17 +10,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AtomicIntegerTest implements Runnable{
 
     private AtomicInteger i = new AtomicInteger(0);
-//    private int i2 = 0;
+    private int i2 = 0;
 
     public int getValue() {
-        return i.get();
-//        return i2;
+//        return i.get();
+        return i2;
     }
 
     public void evenIncrement() {
-        i.addAndGet(2);
-//        i2++;
-//        i2++;
+//        i.addAndGet(2);
+        i2++;
+        i2++;
     }
 
     public void run() {
