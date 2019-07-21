@@ -23,40 +23,43 @@ public class Consumer {
     }
 
     public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoint = 0;
         String result = "Rental Record for " + getName() + "\n";
         for (Rental rental : rentals) {
-            double thisAmount = 0;
-            // 计算金额
-            switch (rental.getMovie().getPriceCode()) {
-                case Movie.REGULAR:
-                    thisAmount += 2;
-                    if (rental.getDaysRented() > 2) {
-                        thisAmount += (rental.getDaysRented() - 2) * 1.5;
-                    }
-                    break;
-                case Movie.NEW_RELEASE:
-                    thisAmount = rental.getDaysRented() * 3;
-                    break;
-                case Movie.CHILDRENS:
-                    thisAmount += 1.5;
-                    if (rental.getDaysRented() > 3) {
-                        thisAmount += (rental.getDaysRented() - 3) * 1.5;
-                    }
-                    break;
-            }
-            // 积分
-            frequentRenterPoint++;
-            if (rental.getMovie().getPriceCode() == Movie.NEW_RELEASE && rental.getDaysRented() > 1) {
-                frequentRenterPoint++;
-            }
-            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(thisAmount) + "\n";
-            // 累加总金额
-            totalAmount += thisAmount;
+            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(rental.getCharge()) + "\n";
         }
-        result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-        result += "You earned " + String.valueOf(frequentRenterPoint) + " frequent renter points";
+        result += "Amount owed is " + String.valueOf(getTotalCharge()) + "\n";
+        result += "You earned " + String.valueOf(getTotalFrequentRenterPoint()) + " frequent renter points";
         return result;
     }
+
+    public String htmlStatement() {
+        String result = "<h1>Rental Record for " + getName() + "</h1>\n";
+        for (Rental rental : rentals) {
+            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(rental.getCharge()) + "<br>\n";
+        }
+        result += "<p>Amount owed is " + String.valueOf(getTotalCharge()) + "\n";
+        result += "You earned " + String.valueOf(getTotalFrequentRenterPoint()) + " frequent renter points</p>";
+        return result;
+    }
+
+    private double getTotalCharge() {
+        double totalAmount = 0;
+        for (Rental rental : rentals) {
+            totalAmount += rental.getCharge();
+        }
+        return totalAmount;
+    }
+
+    private long getTotalFrequentRenterPoint() {
+        int frequentRenterPoint = 0;
+        for (Rental rental : rentals) {
+            frequentRenterPoint += rental.getFrequentRenterPoints();
+        }
+        return frequentRenterPoint;
+    }
+
+
+
+
+
 }
