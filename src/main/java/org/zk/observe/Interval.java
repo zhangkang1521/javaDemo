@@ -1,4 +1,4 @@
-package org.zk;
+package org.zk.observe;
 
 import java.util.Observable;
 

@@ -1,10 +1,8 @@
-package org.zk;
+package org.zk.first;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by zhangkang on 2019/7/20.

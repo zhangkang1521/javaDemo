@@ -1,3 +1,5 @@
+package org.zk.functionobject;
+
 /**
  * 函数对象重构
  */
