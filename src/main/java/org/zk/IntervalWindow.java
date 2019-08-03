@@ -3,14 +3,18 @@ package org.zk;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.Observable;
+import java.util.Observer;
 
-public class IntervalWindow extends Frame {
+public class IntervalWindow extends Frame implements Observer {
     private Label startLabel = new Label("startField");
     private Label endLabel = new Label("endField");
     private Label lengthLabel = new Label("lengthField");
     private TextField startField = new TextField();
     private TextField endField = new TextField();
     private TextField lengthField = new TextField();
+
+    private Interval subject;
 
     public IntervalWindow() {
         startLabel.setBounds(30, 50, 80, 30);
@@ -35,6 +39,19 @@ public class IntervalWindow extends Frame {
         startField.addFocusListener(symFocus);
         endField.addFocusListener(symFocus);
         lengthField.addFocusListener(symFocus);
+        // 观察者
+        subject = new Interval();
+        subject.addObserver(this);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        // 响应Interval对象的通告
+        System.out.println("update by subject");
+        startField.setText(String.valueOf(subject.getStart()));
+        endField.setText(String.valueOf(subject.getEnd()));
+        lengthField.setText(String.valueOf(subject.getLength()));
+
     }
 
     class SymFocus extends FocusAdapter {
@@ -52,29 +69,30 @@ public class IntervalWindow extends Frame {
     }
 
     private void startFieldFocusLost(FocusEvent e) {
-        calculateLength();
+        System.out.println("start field lost");
+        setStart(startField.getText());
     }
 
     private void endFieldFocusLost(FocusEvent e) {
-        calculateLength();
+        System.out.println("end field lost");
+        setEnd(endField.getText());
     }
 
     private void lengthFieldFocusLost(FocusEvent e) {
-        calculateEnd();
+        System.out.println("length field lost");
+        setLength(lengthField.getText());
     }
 
-    private void calculateEnd() {
-        int start = Integer.parseInt(startField.getText());
-        int length = Integer.parseInt(lengthField.getText());
-        int end = start + length;
-        endField.setText(String.valueOf(end));
+    public void setStart(String start) {
+        subject.setStart(Integer.valueOf(start));
     }
 
-    private void calculateLength() {
-        int start = Integer.parseInt(startField.getText());
-        int end = Integer.parseInt(endField.getText());
-        int length = end - start;
-        lengthField.setText(String.valueOf(length));
+    public void setEnd(String end) {
+        subject.setEnd(Integer.valueOf(end));
+    }
+
+    public void setLength(String length) {
+        subject.setLength(Integer.valueOf(length));
     }
 
     public static void main(String[] args) {
