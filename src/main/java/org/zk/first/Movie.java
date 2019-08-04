@@ -39,6 +39,7 @@ public class Movie {
     }
 
     public double getCharge(int daysRented) {
+        // 状态模式
         return price.getCharge(daysRented);
     }
 
