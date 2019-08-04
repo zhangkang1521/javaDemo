@@ -2,25 +2,26 @@ package org.zk.typeCodeState;
 
 
 public class Employee {
-    private int type;
+    private EmployeeType type;
     static final int ENGINEER = 0;
     static final int SALESMAN = 1;
     static final int MANAGER = 2;
 
     Employee(int type) {
-        this.type = type;
+       setType(type);
+    }
+
+    public void setType(int type) {
+        switch (type) {
+            case ENGINEER : this.type = new Engineer(); break;
+            case SALESMAN : this.type = new SalesMan(); break;
+            case MANAGER : this.type = new Manager(); break;
+            default: throw new RuntimeException("unKnow employ type");
+        }
     }
 
     public int calculateSalary(int day) {
-        // TODO 用状态模式取代类型码
-        int result = 0;
-        switch (type) {
-            case ENGINEER : result = 1000 * day; break;
-            case SALESMAN : result = 4000 + day * 100; break;
-            case MANAGER : result = 1000000; break;
-            default: throw new RuntimeException("unKnow employ type");
-        }
-        return result;
+       return type.calculateSalary(day);
     }
 }
 
