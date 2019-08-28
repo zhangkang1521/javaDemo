@@ -7,6 +7,6 @@ public class Site {
     private Customer customer;
 
     public Customer getCustomer() {
-        return customer;
+        return customer == null ? Customer.newNull() : customer;
     }
 }

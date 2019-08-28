@@ -9,6 +9,14 @@ public class Customer {
     private BillingPlan plan;
     private PaymentHistory paymentHistory;
 
+    public boolean isNull() {
+        return false;
+    }
+
+    public static Customer newNull() {
+        return new NullCustomer();
+    }
+
     public String getName() {
         return name;
     }
