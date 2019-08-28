@@ -5,8 +5,8 @@ package org.zk.replaceParam;
  */
 public class ReplaceParam {
 
-    private int quantity = 10;
-    private int itemPrice = 2;
+    private int quantity;
+    private int itemPrice;
 
     public ReplaceParam(int quantity, int itemPrice) {
         this.quantity = quantity;
@@ -14,22 +14,22 @@ public class ReplaceParam {
     }
 
     public double getPrice() {
-        int basePrice = quantity * itemPrice;
-        int disCountLevel;
-        if (quantity > 100) {
-            disCountLevel = 2;
-        } else {
-            disCountLevel = 1;
-        }
-        double finalPrice = disCountedPrice(basePrice, disCountLevel);
-        return finalPrice;
+        return disCountedPrice();
     }
 
-    private double disCountedPrice(int basePrice, int disCountLevel) {
-        if (disCountLevel == 2) {
-            return basePrice * 0.1;
+    public int getBasePrice() {
+        return quantity * itemPrice;
+    }
+
+    private int getDisCountLevel() {
+        return quantity > 100 ? 2 : 1;
+    }
+
+    private double disCountedPrice() {
+        if (getDisCountLevel() == 2) {
+            return getBasePrice() * 0.1;
         } else {
-            return basePrice * 0.05;
+            return getBasePrice() * 0.05;
         }
     }
 
