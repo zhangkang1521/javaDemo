@@ -12,4 +12,6 @@ public abstract class Party {
     }
 
     public abstract int getAnnualCost();
+
+    public abstract int getHeadCount();
 }

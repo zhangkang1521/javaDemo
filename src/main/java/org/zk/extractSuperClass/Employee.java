@@ -15,6 +15,10 @@ public class Employee extends Party{
         return annualCost;
     }
 
+    @Override
+    public int getHeadCount() {
+        return 1;
+    }
 
 
     public String getId() {

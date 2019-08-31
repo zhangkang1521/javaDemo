@@ -6,26 +6,40 @@ import org.junit.Test;
 
 public class DepartmentTest {
 
-    Department department = new Department("finance");
+    Department department = new Department("lvmama");
 
     @Before
     public void before() {
-        department.addStaff(new Employee("zk", "1", 100000));
-        department.addStaff(new Employee("zx", "2", 5000));
+        Department publicService = new Department("publicService");
+        Department kefu = new Department("kefu");
+        Department search = new Department("search");
+        Department finance = new Department("finance");
+        Employee zk = new Employee("zk", "1", 100000);
+        Employee zx = new Employee("zx", "2", 5000);
+        Employee rubinwen = new Employee("rubinwen", "3", 200000);
+        Employee renzeqing = new Employee("renzeqing", "4", 1000);
+        department.addParty(publicService);
+        department.addParty(kefu);
+        publicService.addParty(search);
+        publicService.addParty(finance);
+        kefu.addParty(renzeqing);
+        finance.addParty(zk);
+        finance.addParty(zx);
+        search.addParty(rubinwen);
     }
 
     @Test
     public void getName() {
-        Assert.assertEquals("finance", department.getName());
+        Assert.assertEquals("lvmama", department.getName());
     }
 
     @Test
     public void getTotalAnnualCost() {
-        Assert.assertEquals(105000, department.getAnnualCost());
+        Assert.assertEquals(306000, department.getAnnualCost());
     }
 
     @Test
     public void getHeadCount() {
-        Assert.assertEquals(2, department.getHeadCount());
+        Assert.assertEquals(4, department.getHeadCount());
     }
 }

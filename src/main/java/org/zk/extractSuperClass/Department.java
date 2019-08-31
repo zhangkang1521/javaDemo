@@ -4,25 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Department extends Party {
-    private List<Employee> staff = new ArrayList<>();
+    private List<Party> parties = new ArrayList<>();
 
     public Department(String name) {
         super(name);
     }
 
-    public List<Employee> getStaff() {
-        return staff;
+    public List<Party> getParties() {
+        return parties;
     }
 
-    public void addStaff(Employee employee) {
-        staff.add(employee);
+    public void addParty(Party employee) {
+        parties.add(employee);
     }
 
     public int getAnnualCost() {
-        return staff.stream().mapToInt(Employee::getAnnualCost).sum();
+        return parties.stream().mapToInt(Party::getAnnualCost).sum();
     }
 
     public int getHeadCount() {
-        return staff.size();
+        // 递归调用
+        return parties.stream().mapToInt(Party::getHeadCount).sum();
     }
 }
