@@ -1,13 +1,12 @@
 package org.zk.extractSuperClass;
 
-public class Employee {
+public class Employee extends Party{
 
-    private String name;
     private String id;
     private int annualCost;
 
     public Employee(String name, String id, int annualCost) {
-        this.name = name;
+        super(name);
         this.id = id;
         this.annualCost = annualCost;
     }
@@ -16,9 +15,7 @@ public class Employee {
         return annualCost;
     }
 
-    public String getName() {
-        return name;
-    }
+
 
     public String getId() {
         return id;

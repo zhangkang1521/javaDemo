@@ -3,16 +3,11 @@ package org.zk.extractSuperClass;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Department {
-    private String name;
+public class Department extends Party {
     private List<Employee> staff = new ArrayList<>();
 
     public Department(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+        super(name);
     }
 
     public List<Employee> getStaff() {
@@ -23,7 +18,7 @@ public class Department {
         staff.add(employee);
     }
 
-    public int getTotalAnnualCost() {
+    public int getAnnualCost() {
         return staff.stream().mapToInt(Employee::getAnnualCost).sum();
     }
 

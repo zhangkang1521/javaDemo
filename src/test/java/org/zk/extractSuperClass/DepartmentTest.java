@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class DepartmentTest {
 
     Department department = new Department("finance");
@@ -23,7 +21,7 @@ public class DepartmentTest {
 
     @Test
     public void getTotalAnnualCost() {
-        Assert.assertEquals(105000, department.getTotalAnnualCost());
+        Assert.assertEquals(105000, department.getAnnualCost());
     }
 
     @Test
