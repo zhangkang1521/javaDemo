@@ -1,5 +1,8 @@
 package org.zk.first;
 
+import org.zk.first.statement.HtmlStatement;
+import org.zk.first.statement.TextStatement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,27 +25,19 @@ public class Consumer {
         return name;
     }
 
+    public List<Rental> getRentals() {
+        return rentals;
+    }
+
     public String statement() {
-        String result = "Rental Record for " + getName() + "\n";
-        for (Rental rental : rentals) {
-            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(rental.getCharge()) + "\n";
-        }
-        result += "Amount owed is " + String.valueOf(getTotalCharge()) + "\n";
-        result += "You earned " + String.valueOf(getTotalFrequentRenterPoint()) + " frequent renter points";
-        return result;
+       return new TextStatement().value(this);
     }
 
     public String htmlStatement() {
-        String result = "<h1>Rental Record for " + getName() + "</h1>\n";
-        for (Rental rental : rentals) {
-            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(rental.getCharge()) + "<br>\n";
-        }
-        result += "<p>Amount owed is " + String.valueOf(getTotalCharge()) + "\n";
-        result += "You earned " + String.valueOf(getTotalFrequentRenterPoint()) + " frequent renter points</p>";
-        return result;
+        return new HtmlStatement().value(this);
     }
 
-    private double getTotalCharge() {
+    public double getTotalCharge() {
         double totalAmount = 0;
         for (Rental rental : rentals) {
             totalAmount += rental.getCharge();
@@ -50,7 +45,7 @@ public class Consumer {
         return totalAmount;
     }
 
-    private long getTotalFrequentRenterPoint() {
+    public long getTotalFrequentRenterPoint() {
         int frequentRenterPoint = 0;
         for (Rental rental : rentals) {
             frequentRenterPoint += rental.getFrequentRenterPoints();
