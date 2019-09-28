@@ -21,4 +21,13 @@ public class ArgsTest {
         Args args = new Args("a", new String[]{"-a", "-b"});
         assertEquals(false, args.isValid());
     }
+
+    @Test
+    public void getStringNormal() {
+        Args args = new Args("a*,b*,c*", new String[]{"-ab", "hello", "world", "-c", "great"});
+        assertEquals(true, args.isValid());
+        assertEquals("hello", args.getString('a'));
+        assertEquals("world", args.getString('b'));
+        assertEquals("great", args.getString('c'));
+    }
 }
