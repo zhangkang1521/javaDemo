@@ -5,7 +5,7 @@ import java.util.*;
 public class Args {
     private String schema;
     List<String> argList;
-    private boolean valid;
+    private boolean valid = true;
     private Set<Character> unexpectedArguments = new TreeSet<>();
 
     private Map<Character, ArgumentMarshaller> marshallers = new HashMap<>();
@@ -15,13 +15,12 @@ public class Args {
     public Args(String schema, String[] args) {
         this.schema = schema;
         this.argList = Arrays.asList(args);
-        valid = parse();
+        parse();
     }
 
-    private boolean parse() {
+    private void parse() {
         parseSchema();
         parseArgument();
-        return unexpectedArguments.size() == 0;
     }
 
     private void parseSchema() {
@@ -37,7 +36,9 @@ public class Args {
             marshallers.put(elementId, new BooleanArgumentMarshaller());
         } else if (isStringSchemaElement(elementTail)) {
             marshallers.put(elementId, new StringArgumentMarshaller());
-        } else {
+        } else if (isIntegerSchemaElement(elementTail)) {
+            marshallers.put(elementId, new IntegerArgumentMarshaller());
+        }else {
             throw new RuntimeException("invalid schema, elementId:" + elementId + ",elementTail:" + elementTail);
         }
     }
@@ -48,6 +49,10 @@ public class Args {
 
     private boolean isStringSchemaElement(String elementTail) {
         return "*".equals(elementTail);
+    }
+
+    private boolean isIntegerSchemaElement(String elementTail) {
+        return "#".equals(elementTail);
     }
 
 
@@ -71,6 +76,9 @@ public class Args {
 
     private void parseElement(char argChar) {
         ArgumentMarshaller m = marshallers.get(argChar);
+        if (m == null) {
+            throw new RuntimeException("参数" + argChar + "未在schema中找到");
+        }
         m.set(currentArgument);
     }
 
@@ -91,6 +99,15 @@ public class Args {
             return am == null ? "" : (String)am.get();
         } catch (ClassCastException e) {
             return "";
+        }
+    }
+
+    public int getInteger(char arg) {
+        try {
+            ArgumentMarshaller am = marshallers.get(arg);
+            return am == null ? 0 : (Integer)am.get();
+        } catch (ClassCastException e) {
+            return 0;
         }
     }
 

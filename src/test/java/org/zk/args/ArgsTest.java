@@ -27,10 +27,9 @@ public class ArgsTest {
         assertEquals("", args.getString('a'));
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void getBooleanUnexpected() {
         Args args = new Args("a", new String[]{"-a", "-b"});
-        assertEquals(false, args.isValid());
     }
 
     @Test
@@ -41,6 +40,12 @@ public class ArgsTest {
         assertEquals("world", args.getString('b'));
         assertEquals("great", args.getString('c'));
         assertEquals("", args.getString('d'));
+    }
+
+    @Test
+    public void getIntegerNormal() {
+        Args args = new Args("a#", new String[]{"-a", "12"});
+        assertEquals(12, args.getInteger('a'));
     }
 
     @Test(expected = RuntimeException.class)
