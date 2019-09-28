@@ -1,4 +1,4 @@
-package org.zk;
+package org.zk.args;
 
 import org.junit.Test;
 
