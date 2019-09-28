@@ -1,24 +1,20 @@
 package org.zk.args;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Args {
     private String schema;
-    private String[] args;
+    List<String> argList;
     private boolean valid;
     private Set<Character> unexpectedArguments = new TreeSet<>();
 
-    private Map<Character, Boolean> booleanArgs = new HashMap<>();
-    private Map<Character, String> stringArgs = new HashMap<>();
+    private Map<Character, ArgumentMarshaller> marshallers = new HashMap<>();
 
-    private int currentArgument = 0;
+    Iterator<String> currentArgument;
 
     public Args(String schema, String[] args) {
         this.schema = schema;
-        this.args = args;
+        this.argList = Arrays.asList(args);
         valid = parse();
     }
 
@@ -38,9 +34,11 @@ public class Args {
         char elementId = element.charAt(0);
         String elementTail = element.substring(1);
         if (isBooleanSchemaElement(elementTail)) {
-            parseBooleanSchema(elementId);
+            marshallers.put(elementId, new BooleanArgumentMarshaller());
         } else if (isStringSchemaElement(elementTail)) {
-            parseStringSchema(elementId);
+            marshallers.put(elementId, new StringArgumentMarshaller());
+        } else {
+            throw new RuntimeException("invalid schema, elementId:" + elementId + ",elementTail:" + elementTail);
         }
     }
 
@@ -52,18 +50,10 @@ public class Args {
         return "*".equals(elementTail);
     }
 
-    private void parseBooleanSchema(char elementId) {
-        booleanArgs.put(elementId, false);
-    }
-
-    private void parseStringSchema(char elementId) {
-        stringArgs.put(elementId, "");
-    }
-
 
     private void parseArgument() {
-        for(currentArgument = 0; currentArgument < args.length; currentArgument++) {
-            parseArgument(args[currentArgument]);
+        for(currentArgument = argList.iterator(); currentArgument.hasNext(); ) {
+            parseArgument(currentArgument.next());
         }
     }
 
@@ -80,42 +70,33 @@ public class Args {
     }
 
     private void parseElement(char argChar) {
-        if (isBoolean(argChar)) {
-            setBooleanArg(argChar, true);
-        } else if(isString(argChar)) {
-            setStringArg(argChar);
-        } else {
-            unexpectedArguments.add(argChar);
+        ArgumentMarshaller m = marshallers.get(argChar);
+        m.set(currentArgument);
+    }
+
+
+
+    public boolean getBoolean(char arg) {
+        try {
+            ArgumentMarshaller am = marshallers.get(arg);
+            return am != null && (boolean)am.get();
+        } catch (ClassCastException e) {
+            return false;
         }
     }
 
-    private void setBooleanArg(char argChar, boolean value) {
-        booleanArgs.put(argChar, value);
-    }
-
-    private void setStringArg(char argChar) {
-        stringArgs.put(argChar, args[++currentArgument]);
-    }
-
-    private boolean isBoolean(char argChar) {
-        return booleanArgs.containsKey(argChar);
-    }
-
-    private boolean isString(char argChar) {
-        return stringArgs.containsKey(argChar);
-    }
-
-    public boolean getBoolean(char arg) {
-        return booleanArgs.get(arg);
-    }
-
     public String getString(char arg) {
-        return stringArgs.get(arg);
+        try {
+            ArgumentMarshaller am = marshallers.get(arg);
+            return am == null ? "" : (String)am.get();
+        } catch (ClassCastException e) {
+            return "";
+        }
     }
 
     public boolean isValid() {
         return valid;
     }
 
-
 }
+
