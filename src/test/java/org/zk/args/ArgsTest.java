@@ -1,5 +1,6 @@
 package org.zk.args;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,7 +10,6 @@ public class ArgsTest {
     @Test
     public void getBooleanNormal() {
         Args args = new Args("a,b,c,d", new String[]{"-ab", "-c"});
-        assertEquals(true, args.isValid());
         assertEquals(true, args.getBoolean('a'));
         assertEquals(true, args.getBoolean('b'));
         assertEquals(true, args.getBoolean('c'));
@@ -20,7 +20,6 @@ public class ArgsTest {
     @Test
     public void getWrongType() {
         Args args = new Args("a,b*", new String[]{"-ab", "hello"});
-        assertEquals(true, args.isValid());
         assertEquals(true, args.getBoolean('a'));
         assertEquals("hello", args.getString('b'));
         assertEquals(false, args.getBoolean('b'));
@@ -35,7 +34,6 @@ public class ArgsTest {
     @Test
     public void getStringNormal() {
         Args args = new Args("a*,b*,c*", new String[]{"-ab", "hello", "world", "-c", "great"});
-        assertEquals(true, args.isValid());
         assertEquals("hello", args.getString('a'));
         assertEquals("world", args.getString('b'));
         assertEquals("great", args.getString('c'));
@@ -46,6 +44,29 @@ public class ArgsTest {
     public void getIntegerNormal() {
         Args args = new Args("a#", new String[]{"-a", "12"});
         assertEquals(12, args.getInteger('a'));
+    }
+
+    @Test
+    public void getInvalidInteger() {
+        Args args = null;
+        try {
+            new Args("a#", new String[]{"-a", "five"});
+        } catch (ArgsException e) {
+            assertEquals(ErrorCode.INVALID_INTEGER, e.getErrorCode());
+            assertEquals("a期望是int，但是是five", e.getErrorMessage());
+        }
+
+    }
+
+    @Test
+    public void getMissingInteger() {
+        try {
+             new Args("a#", new String[]{"-a"});
+             fail();
+        } catch (ArgsException e) {
+            assertEquals(ErrorCode.MISSING_INTEGER, e.getErrorCode());
+            assertEquals("a缺失int参数", e.getErrorMessage());
+        }
     }
 
     @Test(expected = RuntimeException.class)

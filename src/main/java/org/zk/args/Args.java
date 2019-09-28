@@ -3,27 +3,15 @@ package org.zk.args;
 import java.util.*;
 
 public class Args {
-    private String schema;
-    List<String> argList;
-    private boolean valid = true;
-    private Set<Character> unexpectedArguments = new TreeSet<>();
-
     private Map<Character, ArgumentMarshaller> marshallers = new HashMap<>();
-
-    Iterator<String> currentArgument;
+    private Iterator<String> currentArgument;
 
     public Args(String schema, String[] args) {
-        this.schema = schema;
-        this.argList = Arrays.asList(args);
-        parse();
+        parseSchema(schema);
+        parseArgument(Arrays.asList(args));
     }
 
-    private void parse() {
-        parseSchema();
-        parseArgument();
-    }
-
-    private void parseSchema() {
+    private void parseSchema(String schema) {
         for (String element : schema.split(",")) {
             parseSchemaElement(element);
         }
@@ -32,41 +20,28 @@ public class Args {
     private void parseSchemaElement(String element) {
         char elementId = element.charAt(0);
         String elementTail = element.substring(1);
-        if (isBooleanSchemaElement(elementTail)) {
+        if (elementTail.length() == 0) {
             marshallers.put(elementId, new BooleanArgumentMarshaller());
-        } else if (isStringSchemaElement(elementTail)) {
+        } else if ("*".equals(elementTail)) {
             marshallers.put(elementId, new StringArgumentMarshaller());
-        } else if (isIntegerSchemaElement(elementTail)) {
+        } else if ("#".equals(elementTail)) {
             marshallers.put(elementId, new IntegerArgumentMarshaller());
         }else {
             throw new RuntimeException("invalid schema, elementId:" + elementId + ",elementTail:" + elementTail);
         }
     }
 
-    private boolean isBooleanSchemaElement(String elementTail) {
-        return elementTail.length() == 0;
-    }
-
-    private boolean isStringSchemaElement(String elementTail) {
-        return "*".equals(elementTail);
-    }
-
-    private boolean isIntegerSchemaElement(String elementTail) {
-        return "#".equals(elementTail);
-    }
 
 
-    private void parseArgument() {
+    private void parseArgument(List<String> argList) {
         for(currentArgument = argList.iterator(); currentArgument.hasNext(); ) {
-            parseArgument(currentArgument.next());
+            String arg = currentArgument.next();
+            if (arg.startsWith("-")) {
+                parseElements(arg);
+            }
         }
     }
 
-    private void parseArgument(String arg) {
-        if (arg.startsWith("-")) {
-            parseElements(arg);
-        }
-    }
 
     private void parseElements(String arg) {
         for (int i = 1; i < arg.length(); i++) {
@@ -79,7 +54,12 @@ public class Args {
         if (m == null) {
             throw new RuntimeException("参数" + argChar + "未在schema中找到");
         }
-        m.set(currentArgument);
+        try {
+            m.set(currentArgument);
+        } catch (ArgsException e) {
+            e.setErrorArgumentId(argChar);
+            throw e;
+        }
     }
 
 
@@ -111,9 +91,6 @@ public class Args {
         }
     }
 
-    public boolean isValid() {
-        return valid;
-    }
 
 }
 

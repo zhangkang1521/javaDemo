@@ -1,6 +1,7 @@
 package org.zk.args;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class IntegerArgumentMarshaller extends ArgumentMarshaller{
 
@@ -8,7 +9,15 @@ public class IntegerArgumentMarshaller extends ArgumentMarshaller{
 
     @Override
     public void set(Iterator<String> s) {
-        intValue = Integer.parseInt(s.next());
+        String param = null;
+        try {
+            param = s.next();
+            intValue = Integer.parseInt(param);
+        } catch (NoSuchElementException e) {
+            throw new ArgsException(ErrorCode.MISSING_INTEGER);
+        } catch (NumberFormatException e) {
+            throw new ArgsException(ErrorCode.INVALID_INTEGER, param);
+        }
     }
 
     @Override
