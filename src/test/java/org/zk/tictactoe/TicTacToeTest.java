@@ -1,12 +1,19 @@
 package org.zk.tictactoe;
 
+
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.List;
+
+
+import static org.junit.Assert.assertEquals;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class TicTacToeTest {
 
@@ -112,6 +119,13 @@ public class TicTacToeTest {
         ticTacToe.play(1, 3);
         String actual = ticTacToe.play(2, 3); // x
         assertEquals("draw", actual);
+    }
+
+    @Test
+    public void test() {
+        List<String> friends = Arrays.asList("Joe", "Daniel");
+//        assertTrue(friends.containsAll(Arrays.asList("Joe", "Daniel")));
+        assertThat("abc", startsWith("a"));
     }
 
 
