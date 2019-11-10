@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.zk.tictactoe.mongo.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,17 +15,23 @@ import static org.junit.Assert.assertEquals;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class TicTacToeTest {
 
     TicTacToe ticTacToe;
+    TicTacToeCollection collection;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Before
-    public void before() {
-        ticTacToe = new TicTacToe();
+    public void before() throws Exception{
+        collection = mock(TicTacToeCollection.class);
+//        collection =  new TicTacToeCollection();
+        ticTacToe = new TicTacToe(collection);
     }
 
     @Test
@@ -126,6 +133,18 @@ public class TicTacToeTest {
         List<String> friends = Arrays.asList("Joe", "Daniel");
 //        assertTrue(friends.containsAll(Arrays.asList("Joe", "Daniel")));
         assertThat("abc", startsWith("a"));
+    }
+
+    @Test
+    public void whenInstantiatedThenSetCollection() {
+        assertNotNull(ticTacToe.getTicTacToeCollection());
+    }
+
+    @Test
+    public void whenPlayThenSave() {
+        TicTacToeBean move = new TicTacToeBean(1, 1, 3, 'X');
+        ticTacToe.play(move.getX(), move.getY());
+        verify(collection).saveMove(move);
     }
 
 
