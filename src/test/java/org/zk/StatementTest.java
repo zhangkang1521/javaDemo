@@ -21,6 +21,13 @@ public class StatementTest {
         connection.close();
     }
 
+    @Test
+    public void testScript() throws Exception {
+        // ;
+        Statement statement = connection.createStatement();
+        statement.execute("create table tb_user2 (  id int,  name varchar(20),  primary key(id))");
+    }
+
 
     @Test
     public void testWrap() throws Exception {
