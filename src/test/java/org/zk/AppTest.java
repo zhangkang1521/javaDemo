@@ -27,18 +27,5 @@ public class AppTest {
         String str = ((UserService)obj).sayHello("zhangxuan");
         System.out.println(str);
     }
-
-//    @Test
-//    public void proxyInterface() throws Exception{
-//        ProxyFactory enhancer = new ProxyFactory();
-//        enhancer.setSuperclass(UserDao.class);
-//        Object obj = enhancer.
-//        ((Proxy) obj).setHandler(new MethodHandler() {
-//            public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
-//                return "xx";
-//            }
-//        });
-//        String str = ((UserDao)obj).findById(1);
-//        System.out.println(str);
-//    }
+    
 }
