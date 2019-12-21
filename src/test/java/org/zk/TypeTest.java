@@ -1,6 +1,5 @@
 package org.zk;
 
-import com.mysql.jdbc.JDBC4Connection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

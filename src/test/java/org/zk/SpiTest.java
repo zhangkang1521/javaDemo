@@ -13,15 +13,16 @@ public class SpiTest {
         ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
         Iterator<Driver> driversIterator = loadedDrivers.iterator();
         while(driversIterator.hasNext()) {
-            System.out.println(driversIterator.next());
+            driversIterator.next();
         }
     }
 
     @Test
     public void testMyDriver() {
         ServiceLoader<MyDriver> drivers = ServiceLoader.load(MyDriver.class);
-        for (MyDriver driver : drivers) {
-            System.out.println(driver.getClass().getName());
+        Iterator<MyDriver> myDriverIterator = drivers.iterator();
+        while (myDriverIterator.hasNext()) {
+            myDriverIterator.next();
         }
     }
 }

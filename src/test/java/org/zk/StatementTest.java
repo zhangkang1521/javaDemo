@@ -31,12 +31,12 @@ public class StatementTest {
 
     @Test
     public void testWrap() throws Exception {
-        Class clazz = Class.forName("com.mysql.jdbc.JDBC4Connection");
-        // Wrapper接口的作用：可以访问特定驱动扩展的方法
-        if (connection.isWrapperFor(clazz)) {
-            JDBC4Connection jdbc4Connection = (JDBC4Connection) connection.unwrap(clazz);
-            jdbc4Connection.getServerCharset();
-        }
+//        Class clazz = Class.forName("com.mysql.jdbc.JDBC4Connection");
+//        // Wrapper接口的作用：可以访问特定驱动扩展的方法
+//        if (connection.isWrapperFor(clazz)) {
+//            JDBC4Connection jdbc4Connection = (JDBC4Connection) connection.unwrap(clazz);
+//            jdbc4Connection.getServerCharset();
+//        }
     }
 
     @Test

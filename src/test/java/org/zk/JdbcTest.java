@@ -1,8 +1,6 @@
 package org.zk;
 
-import com.mysql.jdbc.JDBC4Connection;
-import com.mysql.jdbc.jdbc2.optional.JDBC4ConnectionWrapper;
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
+
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.junit.Test;
 
@@ -18,9 +16,9 @@ public class JdbcTest {
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from tb_user");
         while(resultSet.next()) {
+            Integer id = resultSet.getInt("id");
             String username = resultSet.getString("username");
-            int age = resultSet.getInt("age");
-            System.out.printf("username:%s, age:%d \n", username, age);
+            System.out.printf("id:%d, username:%s\n", id, username);
         }
         connection.close();
     }
