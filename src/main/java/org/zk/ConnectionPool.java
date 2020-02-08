@@ -22,7 +22,7 @@ public class ConnectionPool {
 
     public Connection getConnection() {
         synchronized (pool) {
-            long timeout = 2000;
+            long timeout = 200;
             long future = System.currentTimeMillis() + timeout;
             long remain = timeout;
             while (pool.isEmpty() && remain > 0) {

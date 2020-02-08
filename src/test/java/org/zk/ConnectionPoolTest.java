@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
@@ -13,6 +14,7 @@ public class ConnectionPoolTest {
     private static AtomicInteger success = new AtomicInteger(0);
     private static AtomicInteger fail = new AtomicInteger(0);
     private static  CountDownLatch countDownLatch = new CountDownLatch(10);
+    static Semaphore semaphore = new Semaphore(3); // 控制并发数
 
 
     public static void main(String[] args) throws Exception {
@@ -22,8 +24,8 @@ public class ConnectionPoolTest {
         }
         System.out.println("wait all end");
         countDownLatch.await();
-        System.out.println(success);
-        System.out.println(fail);
+        System.out.println("success:" + success);
+        System.out.println("fail:" + fail);
     }
 
     static class ConnectionTask implements Runnable {
@@ -37,6 +39,11 @@ public class ConnectionPoolTest {
         @Override
         public void run() {
             for (int i = 0; i < 10; i++) {
+                try {
+                    semaphore.acquire();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Connection conn = connectionPool.getConnection();
                 System.out.println(Thread.currentThread() + "=>" + conn);
                 if (conn != null) {
@@ -53,6 +60,7 @@ public class ConnectionPoolTest {
                     fail.incrementAndGet();
                 }
                 connectionPool.releaseConnection(conn);
+                semaphore.release();
             }
             countDownLatch.countDown();
         }
