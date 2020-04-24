@@ -20,6 +20,7 @@ public class MyClassLoader extends ClassLoader {
 		super(parent);
 	}
 
+
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 //		try {
 //			byte[] bytes = Files.readAllBytes(Paths.get("E:/Object.class"));

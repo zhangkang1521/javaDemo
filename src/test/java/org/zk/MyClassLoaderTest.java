@@ -1,7 +1,7 @@
 package org.zk;
 
 import org.junit.Test;
-import sun.util.cldr.CLDRLocaleDataMetaInfo;
+//import sun.util.cldr.CLDRLocaleDataMetaInfo;
 
 import java.lang.reflect.Field;
 
@@ -26,7 +26,7 @@ public class MyClassLoaderTest {
 		System.out.println(Boolean.class.getClassLoader());
 		// ext
 		System.out.println(System.getProperty("java.ext.dirs"));
-		System.out.println(CLDRLocaleDataMetaInfo.class.getClassLoader());
+//		System.out.println(CLDRLocaleDataMetaInfo.class.getClassLoader());
 		// app
 		System.out.println(System.getProperty("java.class.path"));
 		System.out.println(MyClassLoaderTest.class.getClassLoader().getParent());
