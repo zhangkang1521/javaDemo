@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by zhangkang on 2018/3/27.
@@ -25,7 +27,7 @@ public class DynamicColumn {
             employee.setPayment("2000" + i * 1000);
             employees.add(employee);
         }
-        try(InputStream is = new FileInputStream("G:/test.xls")) {
+        try(InputStream is = getClass().getClassLoader().getResourceAsStream("grid_template.xls")) {
             try(OutputStream os = new FileOutputStream("target/grid_output2.xls")) {
                 Context context = new Context();
                 context.putVar("headers", Arrays.asList("姓名", "生日", "薪水"));
@@ -36,22 +38,5 @@ public class DynamicColumn {
         }
     }
 
-    @Test
-    public void test2() {
-        Set<String> set = new HashSet<>();
-        set.add("1");
-        set.add("2");
-        String[] tmp = new String[set.size()];
-        String[] arr = set.toArray(tmp);
-    }
 
-    @Test
-    public void test3() {
-        char[] prefix = new char[]{'a', 'b'};
-        char[] body = new char[]{'c', 'd', 'e'};
-        char[] newBody = new char[5];
-        System.arraycopy(prefix, 0, newBody, 0, prefix.length);
-        System.arraycopy(body, 0, newBody, prefix.length, body.length);
-        System.out.println(newBody);
-    }
 }
