@@ -7,6 +7,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class JacksonTest {
 
     @Test
@@ -29,6 +31,7 @@ public class JacksonTest {
     public void objectToXml() throws Exception {
         User user = new User();
         user.setUsername("zk");
+        user.setMovies(Arrays.asList("a", "b"));
         String result = new XmlMapper().writeValueAsString(user);
         System.out.println(result);
     }
