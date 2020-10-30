@@ -23,6 +23,7 @@ public class SavePointTest {
         connection.close();
     }
 
+    // 嵌套事务
     @Test
     public void savePoint() throws Exception {
         connection.setAutoCommit(false);
@@ -31,7 +32,7 @@ public class SavePointTest {
         Savepoint savepoint1 = connection.setSavepoint("point1");
         stmt.executeUpdate("insert into tb_user(username) values('zx2')");
         Savepoint savepoint2 = connection.setSavepoint("point2");
-        connection.rollback(savepoint2);
+        connection.rollback(savepoint1); // 回退到point1,zx2不会存储
         connection.commit();
     }
 }
