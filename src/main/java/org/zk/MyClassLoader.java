@@ -35,7 +35,7 @@ public class MyClassLoader extends ClassLoader {
 
 
 	private File getClassFile(String name) {
-		File file = new File("D:/Person.class");
+		File file = new File("D:/org/zk/Person.class");
 		return file;
 	}
 
