@@ -7,13 +7,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
 
 public class MyClassLoader extends ClassLoader {
 
 	public MyClassLoader() {
-
+		// 默认Parent为sun.misc.Launcher$AppClassLoader
 	}
 
 	public MyClassLoader(ClassLoader parent) {
@@ -21,18 +19,25 @@ public class MyClassLoader extends ClassLoader {
 	}
 
 
+	// 不打破双亲委派，重写findClass即可
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-//		try {
-//			byte[] bytes = Files.readAllBytes(Paths.get("E:/Object.class"));
-//			Class<?> c = this.defineClass(name, bytes, 0, bytes.length);
-//			return c;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		File file = getClassFile(name);
+		try {
+			byte[] bytes = getClassBytes(file);
+			Class<?> c = this.defineClass(name, bytes, 0, bytes.length);
+			return c;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return super.findClass(name);
 	}
 
 
+	private File getClassFile(String name) {
+		File file = new File("D:/Person.class");
+		return file;
+	}
 
 	private byte[] getClassBytes(File file) throws Exception {
 		// 这里要读入.class的字节，因此要使用字节流
