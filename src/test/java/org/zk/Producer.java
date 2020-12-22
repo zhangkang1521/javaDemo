@@ -22,5 +22,7 @@ public class Producer {
 		producer.close();
 		session.close();
 		connection.close();
+
+		System.in.read();
 	}
 }

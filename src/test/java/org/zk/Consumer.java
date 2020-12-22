@@ -21,7 +21,8 @@ public class Consumer {
 					TextMessage textMessage = (TextMessage) message;
 					String text = textMessage.getText();
 					System.out.println(text);
-				} catch (JMSException e) {
+					Thread.sleep(5000);
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
