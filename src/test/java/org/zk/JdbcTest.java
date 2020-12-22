@@ -11,16 +11,19 @@ public class JdbcTest {
 
     @Test
     public void test1() throws Exception{
-//        Class.forName("com.mysql.jdbc.Driver");
+        Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/zk", "root", "123456");
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from tb_user");
-        while(resultSet.next()) {
+        if(resultSet.next()) {
             Integer id = resultSet.getInt("id");
             String username = resultSet.getString("username");
             System.out.printf("id:%d, username:%s\n", id, username);
+            resultSet.close();
         }
+        statement.close();
         connection.close();
+        System.in.read();
     }
 
     @Test
