@@ -14,7 +14,7 @@ public class JdbcTest {
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/zk", "root", "123456");
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from tb_user");
+        ResultSet resultSet = statement.executeQuery("select * from tb_user limit 1");
         if(resultSet.next()) {
             Integer id = resultSet.getInt("id");
             String username = resultSet.getString("username");
