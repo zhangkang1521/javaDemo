@@ -34,7 +34,7 @@ public class RestHighLevelClientTest {
 	@Before
 	public void before() {
 		RestClientBuilder builder = RestClient.builder(new HttpHost("localhost", 9200));
-		client = new RestHighLevelClient(builder.build());
+		client = new RestHighLevelClient(builder);
 	}
 
 

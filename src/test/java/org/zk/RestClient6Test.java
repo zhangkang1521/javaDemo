@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RestClient5Test {
+public class RestClient6Test {
 
 	RestClient restClient;
 
