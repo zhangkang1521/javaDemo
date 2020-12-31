@@ -28,7 +28,9 @@ public class TransportClient5Test {
 
 	@Before
 	public void createClient() throws Exception {
-		System.setProperty("es.set.netty.runtime.available.processors", "false");
+		// cat-client, es都是用netty导致错误 availableProcessors is already set to [8], rejecting [8]
+		// -Des.set.netty.runtime.available.processors=false
+//		System.setProperty("es.set.netty.runtime.available.processors", "false");
 		client = new PreBuiltTransportClient(Settings.EMPTY)
 				.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 	}
