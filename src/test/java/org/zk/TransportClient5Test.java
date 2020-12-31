@@ -3,12 +3,12 @@ package org.zk;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.util.Date;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
-public class EsApiTest {
+public class TransportClient5Test {
 
 	private Client client;
 
@@ -28,13 +28,15 @@ public class EsApiTest {
 
 	@Before
 	public void createClient() throws Exception {
-		client = TransportClient.builder().build()
+		System.setProperty("es.set.netty.runtime.available.processors", "false");
+		client = new PreBuiltTransportClient(Settings.EMPTY)
 				.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 	}
 
 	@After
-	public void close() {
+	public void close() throws Exception {
 		client.close();
+		System.in.read();
 	}
 
 
@@ -42,7 +44,7 @@ public class EsApiTest {
 	@Test
 	public void insert() throws Exception {
 		XContentBuilder article = jsonBuilder().startObject()
-				.field("id", 3)
+				.field("id", 200)
 				.field("title", "hello")
 				.field("abstract", "hello world")
 				.field("content", "hello World")
@@ -57,21 +59,21 @@ public class EsApiTest {
 //		System.out.println(indexResponse.isCreated());
 
 		// 方式2
-		IndexResponse indexResponse2 = client.prepareIndex(index, type, "7")
+		IndexResponse indexResponse2 = client.prepareIndex(index, type, "200")
 				.setSource(article).get();
-		System.out.println(indexResponse2.isCreated());
+		System.out.println(indexResponse2);
 	}
 
 	@Test
 	public void update() throws Exception {
-		XContentBuilder updateArticle = jsonBuilder().startObject().field("title", "Hello4").endObject();
+		XContentBuilder updateArticle = jsonBuilder().startObject().field("title", "Hello5").endObject();
 		// 方式1
 //		UpdateRequest updateRequest = new UpdateRequest(index, type, "1");
 //		updateRequest.doc(updateArticle);
 //		client.update(updateRequest).get();
 		// 方式2
 		// UpdateRequest toString不可读
-		UpdateResponse updateResponse = client.prepareUpdate(index, type, "7")
+		UpdateResponse updateResponse = client.prepareUpdate(index, type, "200")
 				.setDoc(updateArticle).get();
 		System.out.println(updateResponse);
 	}
@@ -86,8 +88,8 @@ public class EsApiTest {
 
 	@Test
 	public void delete() {
-		DeleteResponse deleteResponse = client.prepareDelete(index, type, "1").get();
-		System.out.println(deleteResponse.isFound());
+		DeleteResponse deleteResponse = client.prepareDelete(index, type, "200").get();
+		System.out.println(deleteResponse);
 	}
 
 
