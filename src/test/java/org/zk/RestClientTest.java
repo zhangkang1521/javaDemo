@@ -26,6 +26,7 @@ public class RestClientTest {
 	@After
 	public void after() throws Exception {
 		restClient.close();
+		System.in.read();
 	}
 
 	@Test
@@ -44,9 +45,9 @@ public class RestClientTest {
 	public void testSave() throws Exception {
 		Map map = new HashMap<>();
 		HttpEntity httpEntity = new NStringEntity("{" +
-				"\"title\": \"hello2\"" +
+				"\"title\": \"hello4\"" +
 				"}", ContentType.APPLICATION_JSON);
-		Response response = restClient.performRequest("POST", "/zk/article/200", map, httpEntity);
+		Response response = restClient.performRequest("POST", "/zk/article/201", map, httpEntity);
 //		System.out.println(EntityUtils.toString(response.getEntity()));
 	}
 
