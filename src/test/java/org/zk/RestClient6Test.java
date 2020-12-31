@@ -5,6 +5,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.junit.After;
@@ -31,7 +32,9 @@ public class RestClient6Test {
 
 	@Test
 	public void testGet() throws Exception {
-		Response response = restClient.performRequest("GET", "/zk/article/200");
+		// Response response = restClient.performRequest("GET", "/zk/article/200");
+		Request request = new Request("GET", "zk/article/200");
+		Response response = restClient.performRequest(request);
 		System.out.println(EntityUtils.toString(response.getEntity()));
 	}
 
