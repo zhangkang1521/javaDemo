@@ -1,9 +1,6 @@
 package org.zk;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -12,10 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class RestClient6Test {
+public class RestClient7Test {
 
 	RestClient restClient;
 
@@ -32,7 +26,6 @@ public class RestClient6Test {
 
 	@Test
 	public void testGet() throws Exception {
-		// Response response = restClient.performRequest("GET", "/zk/article/200");
 		Request request = new Request("GET", "zk/article/200");
 		Response response = restClient.performRequest(request);
 		System.out.println(EntityUtils.toString(response.getEntity()));
@@ -40,17 +33,18 @@ public class RestClient6Test {
 
 	@Test
 	public void testDelete() throws Exception {
-		Response response = restClient.performRequest("DELETE", "/zk/article/200");
+		Request request = new Request("DELETE", "zk/article/200");
+		Response response = restClient.performRequest(request);
 		System.out.println(EntityUtils.toString(response.getEntity()));
 	}
 
 	@Test
 	public void testSave() throws Exception {
-		Map map = new HashMap<>();
-		HttpEntity httpEntity = new NStringEntity("{" +
+		Request request = new Request("POST", "zk/article/200");
+		request.setJsonEntity("{" +
 				"\"title\": \"hello4\"" +
-				"}", ContentType.APPLICATION_JSON);
-		Response response = restClient.performRequest("POST", "/zk/article/201", map, httpEntity);
+				"}");
+		Response response = restClient.performRequest(request);
 //		System.out.println(EntityUtils.toString(response.getEntity()));
 	}
 
