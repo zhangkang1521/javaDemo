@@ -6,7 +6,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.After;
@@ -18,7 +18,7 @@ import java.util.Date;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
-public class TransportClient5Test {
+public class TransportClient6Test {
 
 	private Client client;
 
@@ -28,9 +28,10 @@ public class TransportClient5Test {
 
 	@Before
 	public void createClient() throws Exception {
-		System.setProperty("es.set.netty.runtime.available.processors", "false");
+		// TODO 加探针后报错 availableProcessors is already set to [8], rejecting [8]
+//		System.setProperty("es.set.netty.runtime.available.processors", "false");
 		client = new PreBuiltTransportClient(Settings.EMPTY)
-				.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+				.addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9300));
 	}
 
 	@After
@@ -66,7 +67,7 @@ public class TransportClient5Test {
 
 	@Test
 	public void update() throws Exception {
-		XContentBuilder updateArticle = jsonBuilder().startObject().field("title", "Hello5").endObject();
+		XContentBuilder updateArticle = jsonBuilder().startObject().field("title", "Hello6").endObject();
 		// 方式1
 //		UpdateRequest updateRequest = new UpdateRequest(index, type, "1");
 //		updateRequest.doc(updateArticle);
@@ -81,7 +82,7 @@ public class TransportClient5Test {
 	@Test
 	public void findById() throws Exception {
 		// GetRequest ok
-		GetResponse getResponse = client.prepareGet(index, type, "1").get();
+		GetResponse getResponse = client.prepareGet(index, type, "200").get();
 		System.out.println(getResponse.getSource());
 		System.in.read();
 	}
