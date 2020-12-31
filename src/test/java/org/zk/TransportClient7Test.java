@@ -18,7 +18,7 @@ import java.util.Date;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
-public class TransportClient6Test {
+public class TransportClient7Test {
 
 	private Client client;
 
@@ -29,7 +29,7 @@ public class TransportClient6Test {
 	@Before
 	public void createClient() throws Exception {
 		// TODO 加探针后报错 availableProcessors is already set to [8], rejecting [8]
-//		System.setProperty("es.set.netty.runtime.available.processors", "false");
+		System.setProperty("es.set.netty.runtime.available.processors", "false");
 		client = new PreBuiltTransportClient(Settings.EMPTY)
 				.addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9300));
 	}
@@ -45,7 +45,7 @@ public class TransportClient6Test {
 	@Test
 	public void insert() throws Exception {
 		XContentBuilder article = jsonBuilder().startObject()
-				.field("id", 200)
+				.field("id", 201)
 				.field("title", "hello")
 				.field("abstract", "hello world")
 				.field("content", "hello World")
