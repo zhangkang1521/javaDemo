@@ -79,7 +79,7 @@ public class RedisDataTest {
 
     @Test
     public void testZSet() {
-        // skipList
+        // zipList
         jedis.zadd("zset1", 1, "a");
         // 元素个数大于128，使用skipList
         for (int i = 0; i < 129; i++)
