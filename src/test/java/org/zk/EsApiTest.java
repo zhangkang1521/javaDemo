@@ -47,8 +47,9 @@ public class EsApiTest {
 	}
 
 	@After
-	public void close() {
+	public void close() throws Exception {
 		client.close();
+		System.in.read();
 	}
 
 
