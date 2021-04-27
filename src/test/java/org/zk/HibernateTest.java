@@ -47,7 +47,7 @@ public class HibernateTest {
 
 	@Test
 	public void testQuery() {
-		User user = session.get(User.class, 101L);
+		User user = (User)session.get(User.class, 101L);
 		System.out.println(user);
 	}
 }
