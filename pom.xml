@@ -25,6 +25,7 @@
   </dependencies>
 
   <build>
+    <finalName>java-demo</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -37,4 +38,20 @@
       </plugin>
     </plugins>
   </build>
+
+  <!-- mvn clean package -Dmaven.test.skip=true -Ptest -->
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <build>
+        <finalName>java-demo-dev</finalName>
+      </build>
+    </profile>
+    <profile>
+      <id>test</id>
+      <build>
+        <finalName>java-demo-test</finalName>
+      </build>
+    </profile>
+  </profiles>
 </project>
