@@ -13,5 +13,6 @@ public class Slf4jTest {
     @Test
     public void test1() {
         logger.info("hello,slf4j");
+        logger.warn("hello,slf4j");
     }
 }

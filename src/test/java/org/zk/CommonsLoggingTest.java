@@ -1,7 +1,7 @@
 package org.zk;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 public class CommonsLoggingTest {
@@ -11,11 +11,12 @@ public class CommonsLoggingTest {
     // "org.apache.commons.logging.impl.Jdk14Logger",
     // "org.apache.commons.logging.impl.Jdk13LumberjackLogger",
     // "org.apache.commons.logging.impl.SimpleLog"};
-    Log log = LogFactory.getLog(CommonsLoggingTest.class);
+
+//    Log log = LogFactory.getLog(CommonsLoggingTest.class);
 
     @Test
     public void test1() {
-        System.out.println(log.getClass());
-        log.info("hello");
+//        System.out.println(log.getClass());
+//        log.info("hello");
     }
 }

@@ -1,7 +1,7 @@
 package org.zk;
 
 import org.junit.Test;
-//import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 public class JULTest {
 
     static {
-//        LogManager.getLogManager().reset();
-//        SLF4JBridgeHandler.install();
+        LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install(); // jul-to-slf4j
     }
 
     @Test
