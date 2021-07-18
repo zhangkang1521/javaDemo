@@ -11,9 +11,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.*;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.After;
 import org.junit.Before;
@@ -27,7 +25,7 @@ public class RestHighLevelClientTest {
 
 	private RestHighLevelClient client;
 
-	public static final String index = "zk"; // 相当于db
+	public static final String index = "oms"; // 相当于db
 
 	public static final String type = "article";  // 相当于表
 
@@ -40,16 +38,16 @@ public class RestHighLevelClientTest {
 
 	@Test
 	public void testGet() throws Exception {
-		GetRequest getRequest = new GetRequest("zk", "article", "200");
-		GetResponse getResponse = client.get(getRequest);
+		GetRequest getRequest = new GetRequest(index, "1");
+		GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
 		System.out.println(getResponse);
 	}
 
 	@Test
 	public void testGetAsync() {
-		GetRequest getRequest = new GetRequest("zk", "article", "100");
-		ActionListener actionListener = null;
-		client.getAsync(getRequest, null);
+//		GetRequest getRequest = new GetRequest("zk", "article", "100");
+//		ActionListener actionListener = null;
+//		client.getAsync(getRequest, null);
 	}
 
 	@Test
@@ -62,24 +60,24 @@ public class RestHighLevelClientTest {
 				.field("postTime", new Date())
 				.field("clickCount", 1)
 				.endObject();
-		IndexRequest indexRequest = new IndexRequest(index, type, "200");
+		IndexRequest indexRequest = new IndexRequest(index, "200");
 		indexRequest.source(article);
-		IndexResponse indexResponse = client.index(indexRequest);
+		IndexResponse indexResponse = client.index(indexRequest, null);
 		System.out.println(indexResponse);
 	}
 
 	@Test
 	public void testUpdate() throws Exception {
 		XContentBuilder updateArticle = jsonBuilder().startObject().field("title", "Hello4").endObject();
-		UpdateRequest updateRequest = new UpdateRequest(index, type, "200");
+		UpdateRequest updateRequest = new UpdateRequest(index, "200");
 		updateRequest.doc(updateArticle);
-		UpdateResponse updateResponse = client.update(updateRequest);
+		UpdateResponse updateResponse = client.update(updateRequest, null);
 	}
 
 	@Test
 	public void testDelete() throws Exception {
-		DeleteRequest deleteRequest = new DeleteRequest(index, type, "200");
-		client.delete(deleteRequest);
+		DeleteRequest deleteRequest = new DeleteRequest(index, "200");
+		client.delete(deleteRequest, null);
 	}
 
 
