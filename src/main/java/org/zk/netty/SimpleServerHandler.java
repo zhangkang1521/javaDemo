@@ -1,10 +1,12 @@
 package org.zk.netty;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 
-public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
+public class SimpleServerHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -20,6 +22,17 @@ public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
 		encoded.writeBytes(response.getBytes());
 		ctx.write(encoded);
 		ctx.flush();
+	}
+
+	@Override
+	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		super.write(ctx, msg, promise);
+//		NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);
+//		try {
+//			handler.sent(channel, msg);
+//		} finally {
+//			NettyChannel.removeChannelIfDisconnected(ctx.channel());
+//		}
 	}
 
 }
