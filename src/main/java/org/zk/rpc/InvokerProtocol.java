@@ -7,8 +7,8 @@ import java.io.Serializable;
 @Data
 public class InvokerProtocol implements Serializable {
     private String className;
-//    private String methodName;
-//    private Class<?>[] parames;
-//    private Object[] values;
+    private String methodName;
+    private Class<?>[] parameterTypes;
+    private Object[] values;
 
 }

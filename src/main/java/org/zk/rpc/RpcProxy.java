@@ -15,58 +15,84 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.zk.netty.SimpleClientHandler;
+import org.zk.rpc.api.SayHelloService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 public class RpcProxy {
 
-    private String host = "localhost";
-
-    private int port = 20881;
-
     public static void main(String[] args) {
-        Object result = new RpcProxy().rpcInvoke();
-        System.out.println(result);
+        SayHelloService sayHelloService = (SayHelloService) RpcProxy.create(SayHelloService.class);
+        String result = sayHelloService.sayHello("zhangkang");
+        System.out.println("返回结果" + result);
     }
 
-    public Object rpcInvoke() {
-        InvokerProtocol invokerProtocol = new InvokerProtocol();
-        invokerProtocol.setClassName("org.zk.SayHelloService");
-//        invokerProtocol.setMethodName("sayHello");
-//        invokerProtocol.setParames(null);
-//        invokerProtocol.setValues(null);
-
-        RpcProxyHandler rpcProxyHandler = new RpcProxyHandler();
-
-        EventLoopGroup group = new NioEventLoopGroup();
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline()
-//                                    .addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4))
-//                                    .addLast(new LengthFieldPrepender(4))
-                                    .addLast("encoder", new ObjectEncoder())
-                                    .addLast("decoder", new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(null)))
-                                    .addLast(rpcProxyHandler);
-                        }
-                    });
-            Channel channel = bootstrap.connect(host, port).sync().channel();
+    public static Object create(Class<?> clazz) {
+        return Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new MethodProxy(clazz));
+    }
 
 
-            channel.writeAndFlush(invokerProtocol).sync();
+    private static class MethodProxy implements InvocationHandler {
 
-            channel.closeFuture().sync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            group.shutdownGracefully();
+        private Class<?> clazz;
+
+        private String host = "localhost";
+
+        private int port = 20881;
+
+        public MethodProxy(Class<?> clazz) {
+            this.clazz = clazz;
         }
 
-        return rpcProxyHandler.getResponse();
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return rpcInvoke(method, args);
+        }
+
+        public Object rpcInvoke(Method method, Object[] args) {
+            InvokerProtocol invokerProtocol = new InvokerProtocol();
+            invokerProtocol.setClassName(clazz.getName());
+            invokerProtocol.setMethodName(method.getName());
+            invokerProtocol.setParameterTypes(method.getParameterTypes());
+            invokerProtocol.setValues(args);
+
+            RpcProxyHandler rpcProxyHandler = new RpcProxyHandler();
+
+            EventLoopGroup group = new NioEventLoopGroup();
+            try {
+                Bootstrap bootstrap = new Bootstrap();
+                bootstrap.group(group)
+                        .channel(NioSocketChannel.class)
+                        .handler(new ChannelInitializer<SocketChannel>() {
+                            @Override
+                            protected void initChannel(SocketChannel ch) throws Exception {
+                                ch.pipeline()
+//                                    .addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4))
+//                                    .addLast(new LengthFieldPrepender(4))
+                                        .addLast("encoder", new ObjectEncoder())
+                                        .addLast("decoder", new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(null)))
+                                        .addLast(rpcProxyHandler);
+                            }
+                        });
+                Channel channel = bootstrap.connect(host, port).sync().channel();
+
+
+                channel.writeAndFlush(invokerProtocol).sync();
+
+                channel.closeFuture().sync();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                group.shutdownGracefully();
+            }
+
+            return rpcProxyHandler.getResponse();
+        }
     }
+
+
 }
