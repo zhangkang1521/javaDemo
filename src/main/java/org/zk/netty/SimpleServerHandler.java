@@ -1,10 +1,12 @@
 package org.zk.netty;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 
-public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
+public class SimpleServerHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -18,8 +20,17 @@ public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
 		String response = "echo:" + str;
 		ByteBuf encoded = ctx.alloc().buffer();
 		encoded.writeBytes(response.getBytes());
-		ctx.write(encoded);
-		ctx.flush();
+		// 从当前的hander往前找第一个outbound来执行
+//		ctx.write(encoded);
+//		ctx.flush();
+		// tail往前找第一个是outbound的handler来执行
+		ctx.channel().writeAndFlush(encoded);
+	}
+
+	@Override
+	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		super.write(ctx, msg, promise);
+		System.out.println("write");
 	}
 
 }

@@ -12,7 +12,7 @@ public class OutboundHandlerB extends ChannelOutboundHandlerAdapter {
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		System.out.println("OutboundHandlerB write");
-		ctx.write(msg, promise);
+		super.write(ctx, msg, promise);
 	}
 
 	/**
@@ -26,16 +26,16 @@ public class OutboundHandlerB extends ChannelOutboundHandlerAdapter {
 		ctx.executor().schedule(new Runnable() {
 			@Override
 			public void run() {
-				// 客户端能收到，但是OubBound事件只有A
-//				String response = "echo:";
-//				ByteBuf encoded = ctx.alloc().buffer();
-//				encoded.writeBytes(response.getBytes());
-//				ctx.write(encoded);
-//				ctx.flush();
-				// 客户端收不到，收不到是因为没有解码器，OubBound事件只有A
-//				ctx.writeAndFlush("hello");
-				// 客户端能收不到，但OutBound事件会C -> B -> A 进行传播
-				ctx.channel().write("aa");
+				String response = "echo:";
+				ByteBuf encoded = ctx.alloc().buffer();
+				encoded.writeBytes(response.getBytes());
+				// 是OubBound事件只有A
+				// 会从当前的hander往前找第一个outbound来执行
+//				ctx.writeAndFlush(encoded);
+				// OutBound事件会C -> B -> A 进行传播
+				// 每次都会从tail往前找第一个是outbound的handler来执行。
+				// 一般用这个
+				ctx.channel().writeAndFlush(encoded);
 			}
 		}, 3, TimeUnit.SECONDS);
 	}

@@ -1,4 +1,4 @@
-package org.zk.pipeline;
+package org.zk.life;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -7,12 +7,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.zk.netty.SimpleServerHandler;
+import org.zk.pipeline.*;
 
-public class PipelineServer {
+public class LifeServer {
 
 	public static void main(String[] args) throws Exception {
-		new PipelineServer().start(8888);
+		new LifeServer().start(8888);
 	}
 
 	public void start(int port) throws Exception {
@@ -26,15 +26,8 @@ public class PipelineServer {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
 							ch.pipeline()
-									// 入站 A -> B -> C
-									.addLast(new InboundHandlerA())
-									.addLast(new InboundHandlerB())
-									.addLast(new InboundHandlerC())
-									// 出站 C -> A -> B
-									.addLast(new OutboundHandlerA())
-									.addLast(new OutboundHandlerB())
-									.addLast(new OutboundHandlerC())
-									;
+									.addLast(new LifeInboundHandler())
+									.addLast(new LifeOutboundHandler());
 						}
 					});
 
