@@ -20,10 +20,7 @@ public class SimpleServerHandler extends ChannelDuplexHandler {
 		String response = "echo:" + str;
 		ByteBuf encoded = ctx.alloc().buffer();
 		encoded.writeBytes(response.getBytes());
-		// 从当前的hander往前找第一个outbound来执行
-//		ctx.write(encoded);
-//		ctx.flush();
-		// tail往前找第一个是outbound的handler来执行
+
 		ctx.channel().writeAndFlush(encoded);
 	}
 
