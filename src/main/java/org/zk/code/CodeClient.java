@@ -39,7 +39,12 @@ public class CodeClient {
 			Protocol protocol = new Protocol();
 			protocol.setId(200);
 			channel.writeAndFlush(protocol);
+			// 不注释这一行下面的消息发送不到服务端
+//			channel.closeFuture().sync();
 
+			Protocol protocol2 = new Protocol();
+			protocol2.setId(300);
+			channel.writeAndFlush(protocol2);
 			channel.closeFuture().sync();
 		} catch (Exception e) {
 			e.printStackTrace();

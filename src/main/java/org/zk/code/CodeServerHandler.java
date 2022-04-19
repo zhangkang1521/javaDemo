@@ -11,6 +11,8 @@ public class CodeServerHandler extends ChannelInboundHandlerAdapter {
 			Protocol protocol = (Protocol) msg;
 			protocol.setId(protocol.getId() + 1);
 			ctx.channel().writeAndFlush(protocol);
+		} else {
+			System.out.println("msg not instanceof Protocol");
 		}
 	}
 
