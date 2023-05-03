@@ -30,16 +30,11 @@ public class NettyClient {
 						}
 					});
 			Channel channel = bootstrap.connect(host, port).sync().channel();
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-			for (;;) {
-				String msg = bufferedReader.readLine();
-				if("exit".equals(msg)) {
-					break;
-				}
-				ByteBuf buf = Unpooled.buffer();
-			    buf.writeBytes(msg.getBytes());
-				channel.writeAndFlush(buf);
-			}
+
+			ByteBuf buf = Unpooled.buffer();
+			buf.writeBytes("hello".getBytes());
+			channel.writeAndFlush(buf);
+
 			channel.closeFuture().sync();
 		} catch (Exception e) {
 			e.printStackTrace();

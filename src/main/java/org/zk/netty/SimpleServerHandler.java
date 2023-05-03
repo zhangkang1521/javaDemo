@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 
-public class SimpleServerHandler extends ChannelDuplexHandler {
+public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -22,12 +22,6 @@ public class SimpleServerHandler extends ChannelDuplexHandler {
 		encoded.writeBytes(response.getBytes());
 
 		ctx.channel().writeAndFlush(encoded);
-	}
-
-	@Override
-	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		super.write(ctx, msg, promise);
-		System.out.println("write");
 	}
 
 }
