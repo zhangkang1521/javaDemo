@@ -28,7 +28,7 @@ public class NioClient {
     public static void main(String[] args) {
         socketChannel = SocketChannel.open();
         socketChannel.configureBlocking(false);
-        socketChannel.connect(new InetSocketAddress("localhost", 8888));
+        socketChannel.connect(new InetSocketAddress("localhost", 18899));
         while (!socketChannel.finishConnect()) {
             log.info("connect...");
         }
