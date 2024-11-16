@@ -6,6 +6,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 
+/**
+ * netty入站处理器， ChannelInboundHandler
+ * ChannelInboundHandlerAdapter对接口所有方法都有默认实现，故继承他比较方便
+ */
 public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
