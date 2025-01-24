@@ -13,6 +13,7 @@ import org.zk.netty.SimpleClientHandler;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class PilelineClient {
 
@@ -34,6 +35,8 @@ public class PilelineClient {
 						}
 					});
 			Channel channel = bootstrap.connect(host, port).sync().channel();
+
+//			channel.writeAndFlush("asdf".getBytes(StandardCharsets.UTF_8));
 
 			channel.closeFuture().sync();
 		} catch (Exception e) {

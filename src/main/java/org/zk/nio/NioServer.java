@@ -1,87 +1,64 @@
 package org.zk.nio;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Set;
+import java.util.Iterator;
 
 /**
- * 多路复用Server端
+ * @author zhangkang
+ * @date 2024/11/12 16:11
  */
+@Slf4j
 public class NioServer {
 
-	private ServerSocketChannel serverSocketChannel;
-	private Selector selector;
-	private ByteBuffer byteBufferRead = ByteBuffer.allocate(8);
-	private ByteBuffer byteBufferWrite = ByteBuffer.allocate(8);
+    @SneakyThrows
+    public static void main(String[] args) {
+        Selector selector = Selector.open();
 
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.configureBlocking(false);
+        serverSocketChannel.bind(new InetSocketAddress("localhost", 8888));
+        log.info("服务器启动");
 
-	public NioServer() throws Exception {
-		// 创建多路复用器
-		this.selector = Selector.open();
-		// 创建服务器通道
-		this.serverSocketChannel = ServerSocketChannel.open();
-		this.serverSocketChannel.socket().bind(new InetSocketAddress(8888));
-		this.serverSocketChannel.configureBlocking(false);
-		// 将通道注册到多路复用器上，并注册监听事件
-		this.serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
-		System.out.println("开始监听8888");
-	}
+        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-	public static void main(String[] args) throws Exception {
-		new NioServer().start();
-	}
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
-	public void start() throws Exception {
-		while (true) {
-			this.selector.select(1000);
-			Set<SelectionKey> selected = this.selector.selectedKeys();
-			if (selected != null) {
-				for (SelectionKey k : selected) {
-					// 多路复用
-					if (k.isAcceptable()) {
-						processAccept(k);
-					} else if (k.isReadable()) {
-						processRead(k);
-					}
-				}
-				selected.clear();
-			}
-		}
-	}
-
-	private void processAccept(SelectionKey k) throws Exception {
-		SocketChannel sc = ((ServerSocketChannel) k.channel()).accept();
-		if (sc != null) {
-			System.out.println("收到一个新的连接：" + sc.socket().getRemoteSocketAddress());
-			sc.configureBlocking(false); // 必须设置为非阻塞，否则报错
-			// 将与客户端建立的通道注册到多路复用器，感兴趣读事件
-			sc.register(this.selector, SelectionKey.OP_READ);
-		}
-	}
-
-	private void processRead(SelectionKey k) throws Exception {
-		while (byteBufferRead.hasRemaining()) {
-			SocketChannel socketChannel = (SocketChannel) k.channel();
-			int readSize = socketChannel.read(this.byteBufferRead);
-			if (readSize > 0) {
-				long readOffset = this.byteBufferRead.getLong(0);
-				this.byteBufferRead.flip();
-				System.out.println("服务器读取到：" + socketChannel.getRemoteAddress() + " " + readOffset);
-				// 写给客户端
-				byteBufferWrite.position(0);
-				byteBufferWrite.putLong(readOffset * 10);
-				byteBufferWrite.flip();
-				socketChannel.write(this.byteBufferWrite);
-			} else {
-				break;
-			}
-
-		}
-	}
-
-
+        while (selector.select() > 0) {
+            Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+            while (it.hasNext()) {
+                SelectionKey selectionKey = it.next();
+                if (selectionKey.isAcceptable()) {
+                    // ServerSocketChannel serverSocketChannel2 = (ServerSocketChannel) selectionKey.channel();
+                    SocketChannel socketChannel = serverSocketChannel.accept();
+                    log.info("accept {}", socketChannel);
+                    socketChannel.configureBlocking(false);
+                    socketChannel.register(selector, SelectionKey.OP_READ);
+                    log.info("register read {}", socketChannel);
+                } else if (selectionKey.isReadable()) {
+                    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+                    byteBuffer.clear();
+                    int len = socketChannel.read(byteBuffer);
+                    byteBuffer.flip();
+                    if (len == -1) {
+                        selectionKey.cancel();
+                        socketChannel.close();
+                        log.info("channel close {}", socketChannel);
+                    } else {
+                        log.info("read data:{}", new String(byteBuffer.array(), 0, len));
+                        // log.info("position:{} limit:{}", byteBuffer.position(), byteBuffer.limit());
+                        socketChannel.write(byteBuffer);
+                    }
+                }
+                it.remove();
+            }
+        }
+    }
 }

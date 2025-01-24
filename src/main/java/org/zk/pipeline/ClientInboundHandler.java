@@ -17,13 +17,13 @@ public class ClientInboundHandler extends ChannelInboundHandlerAdapter {
 		ctx.close();
 	}
 
-	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("建立链接时被调用");
-		String msg = "Are you ok?";
-		ByteBuf encoded = ctx.alloc().buffer(4 * msg.length());
-		encoded.writeBytes(msg.getBytes());
-		ctx.write(encoded);
-		ctx.flush();
-	}
+//	@Override
+//	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+//		System.out.println("建立链接时被调用");
+//		String msg = "Are you ok?";
+//		ByteBuf encoded = ctx.alloc().buffer(4 * msg.length());
+//		encoded.writeBytes(msg.getBytes());
+//		ctx.write(encoded);
+//		ctx.flush();
+//	}
 }

@@ -1,72 +1,81 @@
 package org.zk.nio;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.Scanner;
 
 /**
- * Nio客户端
+ * @author zhangkang
+ * @date 2024/11/12 16:11
  */
+@Slf4j
 public class NioClient {
 
-	private Selector selector;
-	private SocketChannel socketChannel;
-	private final ByteBuffer byteBufferWrite = ByteBuffer.allocate(8);
-	private ByteBuffer byteBufferRead = ByteBuffer.allocate(8);
+    private static SocketChannel socketChannel;
 
-	public NioClient() throws Exception {
-		this.selector = Selector.open();
-	}
+    private static Selector selector;
 
-	public static void main(String[] args) throws Exception {
-		new NioClient().start();
-	}
-
-	private void start() throws Exception {
-		connectMaster();
-		long i = 100;
-		while (true) {
-			try {
-				writeToServer(i++);
-				processRead();
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    @SneakyThrows
+    public static void main(String[] args) {
+        socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
+        socketChannel.connect(new InetSocketAddress("localhost", 8888));
+        while (!socketChannel.finishConnect()) {
+            log.info("connect...");
+        }
+        log.info("connect to server");
 
 
-	private void connectMaster() throws Exception {
-		this.socketChannel = SocketChannel.open(new InetSocketAddress(8888));
-		socketChannel.configureBlocking(false);
-		if (this.socketChannel != null) {
-			this.socketChannel.register(this.selector, SelectionKey.OP_READ);
-		}
-	}
+        // 接收服务端消息
+        selector = Selector.open();
+        socketChannel.register(selector, SelectionKey.OP_READ);
+        new Thread(new Receive()).start();
 
-	private void writeToServer(final long maxOffset) throws Exception {
-		this.byteBufferWrite.position(0);
-		this.byteBufferWrite.limit(8);
-		this.byteBufferWrite.putLong(maxOffset);
-		this.byteBufferWrite.position(0);
-		this.byteBufferWrite.limit(8);
-		this.socketChannel.write(this.byteBufferWrite);
-		System.out.println("向服务器发送：" + maxOffset);
-	}
+        // 发送数据
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        Scanner scanner = new Scanner(System.in);
+        log.info("please input(exit:退出)");
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if ("exit".equals(line)) {
+                socketChannel.close();
+                break;
+            }
+            byteBuffer.put(line.getBytes(StandardCharsets.UTF_8));
+            byteBuffer.flip();
+            socketChannel.write(byteBuffer);
+            byteBuffer.clear();
+        }
+    }
 
-	private void processRead() throws Exception {
-		while (byteBufferRead.hasRemaining()) {
-			int readSize = socketChannel.read(this.byteBufferRead);
-			if (readSize > 0) {
-				long readOffset = this.byteBufferRead.getLong(0);
-				this.byteBufferRead.flip();
-				System.out.println("客户端读取到：" + socketChannel.getRemoteAddress() + " " + readOffset);
-			} else {
-				break;
-			}
-		}
-	}
+    static class Receive implements Runnable {
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+
+        @Override
+        @SneakyThrows
+        public void run() {
+            while (selector.select() > 0) {
+                Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+                while (it.hasNext()) {
+                    SelectionKey selectionKey = it.next();
+                    if (selectionKey.isReadable()) {
+                        byteBuffer.clear();
+                        int len = socketChannel.read(byteBuffer);
+                        byteBuffer.flip();
+                        log.info("收到服务器数据 {}", new String(byteBuffer.array(), 0, len));
+                    }
+                    it.remove();
+                }
+            }
+        }
+    }
 }

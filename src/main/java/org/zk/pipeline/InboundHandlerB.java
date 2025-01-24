@@ -8,7 +8,8 @@ public class InboundHandlerB extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		System.out.println("InboundHandlerB");
-		ctx.fireChannelRead(msg);
+		// 如果注释下面这行，流水线不会往下走
+		super.channelRead(ctx, msg);
 	}
 
 }
