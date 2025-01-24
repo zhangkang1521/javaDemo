@@ -1,9 +1,11 @@
 package org.zk.ssl;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import io.netty.handler.ssl.SslHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.InputStream;
@@ -57,6 +59,8 @@ public class SSLEchoClient {
             }
         }
     }
+
+
 
     public static void main(String[] args) {
         connect("127.0.0.1");

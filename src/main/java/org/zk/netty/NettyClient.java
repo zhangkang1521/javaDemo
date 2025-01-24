@@ -1,5 +1,6 @@
 package org.zk.netty;
 
+import cn.hutool.core.io.resource.ResourceUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.*;
 import io.netty.channel.*;
@@ -12,6 +13,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.ssl.SslHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.zk.codec.Byte2IntegerCodec;
@@ -19,7 +21,10 @@ import org.zk.codec.IntegerDuplexHandler;
 import org.zk.decoder.Byte2IntegerDecoder;
 import org.zk.encoder.Integer2ByteEncoder;
 import org.zk.protobuf.MsgProtos;
+import org.zk.ssl.SSLContextHelper;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +53,7 @@ public class NettyClient {
 //                            new Integer2ByteEncoder(), // 出站编码器
                             // new Byte2IntegerCodec(),
 //                            new IntegerDuplexHandler(),
+//                            createSslHandler(), // 安全加密
                             new ProtobufVarint32FrameDecoder(),
                             new ProtobufDecoder(MsgProtos.Msg.getDefaultInstance()),
                             new ProtobufVarint32LengthFieldPrepender(),
@@ -71,7 +77,7 @@ public class NettyClient {
             channel.writeAndFlush(msg);
             // 输入
             // new Thread(new Input()).start();
-            Thread.sleep(200);
+            Thread.sleep(1000);
             channel.close().sync();
 
             // 等待通道关闭
@@ -115,6 +121,15 @@ public class NettyClient {
                 // byteBuf.release();
 //            }
         }
+    }
+
+    private SslHandler createSslHandler() throws Exception {
+        final String KEYSTORE_FILE = ResourceUtil.getResource("jks/one-way-auth/client.jks").getPath();
+        SSLContext sslContext = SSLContextHelper.createSslContext("123456", KEYSTORE_FILE);
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        sslEngine.setUseClientMode(true);
+        sslEngine.setNeedClientAuth(true);
+        return new SslHandler(sslEngine);
     }
 
     public static void main(String[] args) {

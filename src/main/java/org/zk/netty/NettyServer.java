@@ -1,5 +1,6 @@
 package org.zk.netty;
 
+import cn.hutool.core.io.resource.ResourceUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -13,12 +14,18 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.zk.codec.Byte2IntegerCodec;
 import org.zk.codec.IntegerDuplexHandler;
 import org.zk.decoder.Byte2IntegerDecoder;
 import org.zk.encoder.Integer2ByteEncoder;
 import org.zk.protobuf.MsgProtos;
+import org.zk.ssl.SSLContextHelper;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 @Slf4j
 public class NettyServer {
@@ -63,10 +70,11 @@ public class NettyServer {
 //                            new Integer2ByteEncoder(), // 出站-编码
 //                            new Byte2IntegerCodec(),
 //                            new IntegerDuplexHandler(),
-                            new ProtobufVarint32FrameDecoder(),
-                            new ProtobufDecoder(MsgProtos.Msg.getDefaultInstance()),
-                            new ProtobufVarint32LengthFieldPrepender(),
-                            new ProtobufEncoder(),
+//                            createSslHandler(), // 安全加密
+                            new ProtobufVarint32FrameDecoder(), // 解码length+data -> data
+                            new ProtobufDecoder(MsgProtos.Msg.getDefaultInstance()), // 解码ByteBuf到Msg
+                            new ProtobufVarint32LengthFieldPrepender(), // 编码，加上length
+                            new ProtobufEncoder(),  // 编码，Msg到ByteBuf
                             SimpleServerHandler.INSTANCE); // 入站业务处理
                 }
             });
@@ -83,6 +91,15 @@ public class NettyServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    private SslHandler createSslHandler() throws Exception {
+        final String KEYSTORE_FILE = ResourceUtil.getResource("jks/one-way-auth/server.jks").getPath();
+        SSLContext sslContext = SSLContextHelper.createSslContext("123456", KEYSTORE_FILE);
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        sslEngine.setUseClientMode(false);
+        sslEngine.setNeedClientAuth(false);
+        return new SslHandler(sslEngine);
     }
 
     public static void main(String[] args) throws Exception {
