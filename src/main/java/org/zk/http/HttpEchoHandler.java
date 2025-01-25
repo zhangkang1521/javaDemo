@@ -16,8 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 
 /**
  * @author zhangkang
@@ -112,6 +111,13 @@ public class HttpEchoHandler extends SimpleChannelInboundHandler<FullHttpRequest
                 log.info("file upload {}", fileUpload.getName());
             }
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+    {
+        log.info("远程连接已经主动关闭， channel {}", ctx.channel());
+//        cause.printStackTrace();
     }
 
 }

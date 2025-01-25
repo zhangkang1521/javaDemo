@@ -1,5 +1,6 @@
 package org.zk.http;
 
+import cn.hutool.core.io.resource.ResourceUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -12,7 +13,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.ssl.SslHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.zk.ssl.SSLContextHelper;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 @Slf4j
 public class NettyServer {
@@ -30,6 +36,7 @@ public class NettyServer {
 
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
+                    ch.pipeline().addLast(createSslHandler()); // https
                     ch.pipeline().addLast(new HttpRequestDecoder());
                     ch.pipeline().addLast(new HttpObjectAggregator(65535));
                     ch.pipeline().addLast(new HttpResponseEncoder());
@@ -46,7 +53,16 @@ public class NettyServer {
         }
     }
 
+    private SslHandler createSslHandler() throws Exception {
+        final String KEYSTORE_FILE = ResourceUtil.getResource("jks/one-way-auth/server.jks").getPath();
+        SSLContext sslContext = SSLContextHelper.createSslContext("123456", KEYSTORE_FILE);
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        sslEngine.setUseClientMode(false);
+        sslEngine.setNeedClientAuth(false);
+        return new SslHandler(sslEngine);
+    }
+
     public static void main(String[] args) throws Exception {
-        new NettyServer().start(9999);
+        new NettyServer().start(8888);
     }
 }
