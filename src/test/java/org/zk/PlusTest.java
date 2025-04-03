@@ -8,6 +8,7 @@ import sun.misc.Unsafe;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @author zhangkang
@@ -25,6 +26,34 @@ public class PlusTest {
         // 在高并发场景下，CAS 的性能通常优于 synchronized，因为 CAS 避免了锁的竞争。
         synchronizedAdd();
         casAdd();
+        // 高并发下，longAdder性能更好
+        longAdder();
+    }
+
+    @Test
+    @SneakyThrows
+    public void longAdder() {
+
+        long start = System.currentTimeMillis();
+
+        LongAdder count = new LongAdder();
+
+        CountDownLatch latch = new CountDownLatch(THREAD);
+
+        for (int i = 0; i < THREAD; i++) {
+            new Thread(() -> {
+                for (int j = 0; j < STEP; j++) {
+                    count.increment();
+                }
+                latch.countDown();
+            }).start();
+        }
+
+        if (latch.await(2, TimeUnit.MINUTES)) {
+            log.info("longAdder count {}", count.sum());
+        }
+
+        log.info("longAdder 耗时 {}", System.currentTimeMillis() - start);
     }
 
 
